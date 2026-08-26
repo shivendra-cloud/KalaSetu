@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = 'mongodb+srv://kalasetu:Kalasetu%402026@kalasetu-cluster.mpljkgp.mongodb.net/kalasetu?appName=kalasetu-cluster';
+const MONGODB_URI = 'mongodb+srv://Admin:Admin123@kalasetu-cluster.mpljkgp.mongodb.net/kalasetu?appName=kalasetu-cluster';
 
 const productSchema = new mongoose.Schema({
   name: String,
