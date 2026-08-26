@@ -1,0 +1,43 @@
+:root {
+  --saffron: #FF9933;
+  --saffron-dark: #E67E00;
+  --green: #138808;
+  --warm-bg: #FFF8F0;
+  --text-dark: #2D3748;
+  --text-light: #718096;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--warm-bg);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+input, textarea, select {
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--saffron) !important;
+  box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.1);
+}
