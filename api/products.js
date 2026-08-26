@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  console.error('MONGODB_URI is not defined');
-}
+const MONGODB_URI = 'mongodb+srv://kalasetu:kalasetu@kalasetu-cluster.mpljkgp.mongodb.net/kalasetu?appName=kalasetu-cluster';
 
 const productSchema = new mongoose.Schema({
   name: String,
@@ -34,27 +30,11 @@ async function dbConnect() {
   }
 
   if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 10000,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('MongoDB connected successfully');
+    cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
       return mongoose;
-    }).catch(err => {
-      console.error('MongoDB connection error:', err);
-      throw err;
     });
   }
-  
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
-
+  cached.conn = await cached.promise;
   return cached.conn;
 }
 
@@ -84,9 +64,6 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('API Error:', error.message);
-    return res.status(500).json({ 
-      error: error.message,
-      hint: 'Check if MONGODB_URI is set correctly'
-    });
+    return res.status(500).json({ error: error.message });
   }
 }
