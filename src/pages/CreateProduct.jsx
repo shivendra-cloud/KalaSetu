@@ -1,20 +1,37 @@
 import { useState } from "react";
-import { FiArrowLeft, FiArrowRight, FiCheck } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight, FiCheck, FiUpload } from "react-icons/fi";
 
 export default function CreateProduct() {
   const [step, setStep] = useState(1);
   const [generating, setGenerating] = useState(false);
   const [published, setPublished] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const [form, setForm] = useState({ 
     name: "", 
     category: "", 
     material: "", 
     price: "", 
-    story: "" 
+    story: "",
+    artisanName: "",
+    location: "",
+    image: ""
   });
 
   const update = (field, value) => {
     setForm({ ...form, [field]: value });
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result;
+        setImagePreview(base64);
+        update("image", base64);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const generateAI = async () => {
@@ -51,7 +68,10 @@ export default function CreateProduct() {
           description: form.story,
           tags: "handmade, indian, artisan",
           category: form.category || "Handmade Craft",
-          artisanStory: form.story
+          artisanStory: form.story,
+          artisanName: form.artisanName,
+          location: form.location,
+          image: form.image
         })
       });
       setPublished(true);
@@ -69,13 +89,14 @@ export default function CreateProduct() {
               <FiCheck size={34} />
             </div>
             <h2>Your craft is now live ✨</h2>
-            <p>Your creation has been added to the KalaSetu marketplace.</p>
+            <p>Your creation has been submitted for review. It will appear on the marketplace once approved.</p>
             <button 
               className="ks-btn ks-btn-primary" 
               onClick={() => { 
                 setPublished(false); 
                 setStep(1); 
-                setForm({ name: "", category: "", material: "", price: "", story: "" });
+                setForm({ name: "", category: "", material: "", price: "", story: "", artisanName: "", location: "", image: "" });
+                setImagePreview(null);
               }}
             >
               Add another craft
@@ -98,7 +119,6 @@ export default function CreateProduct() {
           </p>
         </div>
 
-        {/* STEPPER */}
         <div className="ks-stepper">
           {[1, 2, 3].map((item, index) => (
             <div key={item} className={`ks-step ${step >= item ? "active" : ""}`}>
@@ -120,7 +140,28 @@ export default function CreateProduct() {
             <>
               <div className="ks-form-grid">
                 <div className="ks-form-group">
-                  <label className="ks-form-label">Craft name</label>
+                  <label className="ks-form-label">Artisan Name *</label>
+                  <input 
+                    className="ks-input" 
+                    value={form.artisanName} 
+                    onChange={(e) => update("artisanName", e.target.value)} 
+                    placeholder="e.g. Rajesh Kumar" 
+                    required 
+                  />
+                </div>
+
+                <div className="ks-form-group">
+                  <label className="ks-form-label">Location</label>
+                  <input 
+                    className="ks-input" 
+                    value={form.location} 
+                    onChange={(e) => update("location", e.target.value)} 
+                    placeholder="e.g. Jaipur, Rajasthan" 
+                  />
+                </div>
+
+                <div className="ks-form-group">
+                  <label className="ks-form-label">Craft name *</label>
                   <input 
                     className="ks-input" 
                     value={form.name} 
@@ -158,7 +199,7 @@ export default function CreateProduct() {
                 </div>
 
                 <div className="ks-form-group">
-                  <label className="ks-form-label">Price</label>
+                  <label className="ks-form-label">Price (₹)</label>
                   <input 
                     className="ks-input" 
                     type="number" 
@@ -166,6 +207,40 @@ export default function CreateProduct() {
                     onChange={(e) => update("price", e.target.value)} 
                     placeholder="₹ 0" 
                   />
+                </div>
+
+                <div className="ks-form-group full">
+                  <label className="ks-form-label">Product Image</label>
+                  <div style={{
+                    border: '2px dashed #D4AF37',
+                    borderRadius: '10px',
+                    padding: '20px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    background: '#FFFDD0'
+                  }}>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ display: 'none' }}
+                      id="image-upload"
+                    />
+                    <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
+                      {imagePreview ? (
+                        <img 
+                          src={imagePreview} 
+                          alt="Preview" 
+                          style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '10px' }}
+                        />
+                      ) : (
+                        <>
+                          <FiUpload size={30} style={{ color: '#D4AF37', marginBottom: '10px' }} />
+                          <p style={{ color: '#718096' }}>Click to upload product image</p>
+                        </>
+                      )}
+                    </label>
+                  </div>
                 </div>
 
                 <div className="ks-form-group full">
@@ -227,11 +302,22 @@ export default function CreateProduct() {
 
           {step === 3 && (
             <>
+              <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                {imagePreview && (
+                  <img 
+                    src={imagePreview} 
+                    alt={form.name} 
+                    style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '15px' }}
+                  />
+                )}
+              </div>
               <span className="ks-product-category">
                 {form.category || "Craft"}
               </span>
               <h2>{form.name || "Untitled Craft"}</h2>
-              <p>{form.material}</p>
+              {form.artisanName && <p><strong>Artisan:</strong> {form.artisanName}</p>}
+              {form.location && <p><strong>Location:</strong> {form.location}</p>}
+              <p><strong>Material:</strong> {form.material}</p>
               <p className="ks-product-ai">{form.story}</p>
               <h2>₹{form.price || "0"}</h2>
               <div className="ks-form-actions">

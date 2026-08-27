@@ -6,6 +6,7 @@ import SearchFilters from "./components/SearchFilters";
 import ProductGrid from "./components/ProductGrid";
 import CreateProduct from "./pages/CreateProduct";
 import AdminPanel from "./pages/AdminPanel";
+import ProductDetail from "./pages/ProductDetail";
 import Footer from "./components/Footer";
 import "./styles.css";
 
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<><Navbar /><CreateProduct /><Footer /></>} />
         <Route path="/admin" element={<><Navbar /><AdminPanel /><Footer /></>} />
+        <Route path="/product/:id" element={<><Navbar /><ProductDetail /><Footer /></>} />
       </Routes>
     </BrowserRouter>
   );

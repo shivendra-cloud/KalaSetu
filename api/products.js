@@ -14,6 +14,7 @@ const productSchema = new mongoose.Schema({
   artisanName: String,
   location: String,
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  image: String,
   createdAt: { type: Date, default: Date.now }
 });
 
