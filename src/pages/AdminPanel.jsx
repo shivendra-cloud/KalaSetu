@@ -9,7 +9,7 @@ export default function AdminPanel() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const ADMIN_PASSWORD = 'kalasetu2026';
+  const ADMIN_PASSWORD = 'SHIVENDRA@000';
 
   const handleLogin = () => {
     if (password === ADMIN_PASSWORD) {
