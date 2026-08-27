@@ -1,4 +1,3 @@
-cat > src/pages/AdminPanel.jsx << 'EOF'
 import { useEffect, useState } from 'react';
 import { FiCheck, FiX, FiTrash2, FiRefreshCw } from 'react-icons/fi';
 
@@ -10,7 +9,9 @@ export default function AdminPanel() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin-products');
+      const res = await fetch('/api/products', {
+        headers: { 'x-admin': 'true' }
+      });
       const data = await res.json();
       setProducts(data);
     } catch (error) {
@@ -80,15 +81,11 @@ export default function AdminPanel() {
           <span className="ks-eyebrow">Admin Panel</span>
           <h1 style={{ fontSize: '2.5rem', margin: '10px 0 0' }}>Manage Crafts</h1>
         </div>
-        <button 
-          className="ks-btn ks-btn-secondary"
-          onClick={fetchProducts}
-        >
+        <button className="ks-btn ks-btn-secondary" onClick={fetchProducts}>
           <FiRefreshCw /> Refresh
         </button>
       </div>
 
-      {/* Filter Tabs */}
       <div className="ks-filter-chips" style={{ marginBottom: '2rem' }}>
         {['all', 'pending', 'approved', 'rejected'].map(status => (
           <button
@@ -97,28 +94,16 @@ export default function AdminPanel() {
             onClick={() => setFilter(status)}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
-            {status === 'pending' && ` (${products.filter(p => p.status === 'pending').length})`}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '3rem' }}>
-          <div className="ks-skeleton" style={{ width: '200px', height: '30px', margin: '0 auto' }} />
-        </div>
+        <div style={{ textAlign: 'center', padding: '3rem' }}>Loading...</div>
       ) : filteredProducts.length === 0 ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '3rem',
-          background: 'white',
-          borderRadius: '20px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-        }}>
+        <div style={{ textAlign: 'center', padding: '3rem', background: 'white', borderRadius: '20px' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📦</div>
           <h3>No products found</h3>
-          <p style={{ color: 'var(--ks-text-muted)' }}>
-            {filter === 'all' ? 'No products yet' : `No ${filter} products`}
-          </p>
         </div>
       ) : (
         <div style={{ display: 'grid', gap: '1rem' }}>
@@ -131,7 +116,6 @@ export default function AdminPanel() {
               background: 'white',
               borderRadius: '15px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-              border: '1px solid var(--ks-border)',
               flexWrap: 'wrap',
               gap: '1rem'
             }}>
@@ -150,11 +134,8 @@ export default function AdminPanel() {
                     {product.status}
                   </span>
                 </div>
-                <p style={{ color: 'var(--ks-text-muted)', margin: '0 0 5px', fontSize: '0.9rem' }}>
+                <p style={{ color: '#718096', margin: '0 0 5px', fontSize: '0.9rem' }}>
                   {product.category} • {product.material} • ₹{product.price}
-                </p>
-                <p style={{ color: 'var(--ks-text-secondary)', margin: 0, fontSize: '0.85rem' }}>
-                  By: {product.artisanName || 'Unknown'} {product.location ? `from ${product.location}` : ''}
                 </p>
               </div>
 
@@ -164,7 +145,6 @@ export default function AdminPanel() {
                     className="ks-btn"
                     style={{ background: '#2e7d52', color: 'white', padding: '8px 14px', fontSize: '0.85rem' }}
                     onClick={() => handleApprove(product._id)}
-                    title="Approve"
                   >
                     <FiCheck /> Approve
                   </button>
@@ -174,7 +154,6 @@ export default function AdminPanel() {
                     className="ks-btn"
                     style={{ background: '#b7791f', color: 'white', padding: '8px 14px', fontSize: '0.85rem' }}
                     onClick={() => handleReject(product._id)}
-                    title="Reject"
                   >
                     <FiX /> Reject
                   </button>
@@ -183,7 +162,6 @@ export default function AdminPanel() {
                   className="ks-btn"
                   style={{ background: '#c0392b', color: 'white', padding: '8px 14px', fontSize: '0.85rem' }}
                   onClick={() => handleDelete(product._id)}
-                  title="Delete"
                 >
                   <FiTrash2 /> Delete
                 </button>
@@ -195,4 +173,3 @@ export default function AdminPanel() {
     </div>
   );
 }
-EOF

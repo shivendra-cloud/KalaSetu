@@ -1,6 +1,3 @@
-cd /workspaces/KalaSetu/kalasetu
-
-cat > api/products.js << 'EOF'
 import mongoose from 'mongoose';
 
 const MONGODB_URI = 'mongodb+srv://Admin:Admin123@kalasetu-cluster.mpljkgp.mongodb.net/kalasetu?appName=kalasetu-cluster';
@@ -54,27 +51,34 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
 
+    // Check for admin query parameter
+    const isAdmin = req.headers['x-admin'] === 'true';
+
     if (req.method === 'POST') {
       const product = new Product(req.body);
       await product.save();
       return res.status(201).json(product);
     } 
     else if (req.method === 'GET') {
-      // Public: only approved products
-      const products = await Product.find({ status: 'approved' }).sort({ createdAt: -1 });
-      return res.status(200).json(products);
+      if (isAdmin) {
+        // Admin: get ALL products
+        const products = await Product.find({}).sort({ createdAt: -1 });
+        return res.status(200).json(products);
+      } else {
+        // Public: only approved products
+        const products = await Product.find({ status: 'approved' }).sort({ createdAt: -1 });
+        return res.status(200).json(products);
+      }
     } 
     else if (req.method === 'PUT') {
-      // Admin: update status (approve/reject)
       const { id, status } = req.body;
       const product = await Product.findByIdAndUpdate(id, { status }, { new: true });
       return res.status(200).json(product);
     } 
     else if (req.method === 'DELETE') {
-      // Admin: delete product
       const { id } = req.body;
       await Product.findByIdAndDelete(id);
-      return res.status(200).json({ message: 'Product deleted successfully' });
+      return res.status(200).json({ message: 'Product deleted' });
     } 
     else {
       return res.status(405).end();
@@ -84,4 +88,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
-EOF
