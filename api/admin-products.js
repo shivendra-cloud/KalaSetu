@@ -1,4 +1,3 @@
-cat > api/admin-products.js << 'EOF'
 import mongoose from 'mongoose';
 
 const MONGODB_URI = 'mongodb+srv://Admin:Admin123@kalasetu-cluster.mpljkgp.mongodb.net/kalasetu?appName=kalasetu-cluster';
@@ -42,7 +41,7 @@ async function dbConnect() {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -53,7 +52,6 @@ export default async function handler(req, res) {
     await dbConnect();
 
     if (req.method === 'GET') {
-      // Get ALL products (pending, approved, rejected)
       const products = await Product.find({}).sort({ createdAt: -1 });
       return res.status(200).json(products);
     } 
@@ -65,4 +63,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
-EOF
