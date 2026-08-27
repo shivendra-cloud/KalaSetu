@@ -5,6 +5,7 @@ import Hero from "./components/Hero";
 import SearchFilters from "./components/SearchFilters";
 import ProductGrid from "./components/ProductGrid";
 import CreateProduct from "./pages/CreateProduct";
+import AdminPanel from "./pages/AdminPanel";
 import Footer from "./components/Footer";
 import "./styles.css";
 
@@ -38,6 +39,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<><Navbar /><CreateProduct /><Footer /></>} />
+        <Route path="/admin" element={<><Navbar /><AdminPanel /><Footer /></>} />
       </Routes>
     </BrowserRouter>
   );
