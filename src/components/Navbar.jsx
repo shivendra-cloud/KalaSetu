@@ -1,11 +1,9 @@
-import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FiMenu, FiSearch, FiX, FiUser, FiSun, FiMoon } from "react-icons/fi";
 
 export default function Navbar() {
-  const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dark, setDark] = useState(document.documentElement.dataset.theme === "dark");
@@ -40,17 +38,17 @@ export default function Navbar() {
         </Link>
 
         <nav className="ks-nav-links">
-          <NavLink to="/" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>{t('discover')}</NavLink>
-          <NavLink to="/create" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>{t('sell_craft')}</NavLink>
-          <LanguageSwitcher />
-      </nav>
+          <NavLink to="/" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Discover</NavLink>
+          <NavLink to="/create" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Sell Craft</NavLink>
+        </nav>
 
         <div className="ks-nav-search">
           <FiSearch size={16} />
-          <input type="search" placeholder={t('search_placeholder')} aria-label="Search crafts" />
+          <input type="search" placeholder="Search crafts..." aria-label="Search crafts" />
         </div>
 
         <div className="ks-navbar-actions" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <LanguageSwitcher />
           <button className="ks-btn ks-btn-secondary" onClick={toggleTheme} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
             {dark ? <FiSun /> : <FiMoon />}
           </button>
@@ -64,8 +62,8 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div style={{ padding: "15px 20px 20px", borderTop: "1px solid var(--ks-border)" }}>
-          <NavLink to="/" className="ks-nav-link" onClick={() => setMobileOpen(false)}>{t('discover')}</NavLink>
-          <NavLink to="/create" className="ks-nav-link" onClick={() => setMobileOpen(false)}>{t('sell_craft')}</NavLink>
+          <NavLink to="/" className="ks-nav-link" onClick={() => setMobileOpen(false)}>Discover</NavLink>
+          <NavLink to="/create" className="ks-nav-link" onClick={() => setMobileOpen(false)}>Sell Craft</NavLink>
         </div>
       )}
     </header>

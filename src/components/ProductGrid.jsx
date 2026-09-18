@@ -1,9 +1,7 @@
-import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 
 export default function ProductGrid({ search, category }) {
-  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,8 +40,8 @@ export default function ProductGrid({ search, category }) {
         </div>
       ) : (
         <div style={{ padding: '80px 20px', textAlign: 'center' }}>
-          <h3>{t('no_crafts_found')}</h3>
-          <p style={{ color: 'var(--ks-text-muted)' }}>{t('try_another_search_or_category')}</p>
+          <h3>No crafts found</h3>
+          <p style={{ color: 'var(--ks-text-muted)' }}>Try another search or category.</p>
         </div>
       )}
     </div>

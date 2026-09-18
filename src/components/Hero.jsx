@@ -1,52 +1,36 @@
-import { useTranslation } from 'react-i18next';
 import { motion } from "framer-motion";
 import { FiArrowRight, FiPlay } from "react-icons/fi";
 
+const stats = [
+  { value: "2,500+", label: "Artisans" },
+  { value: "18K+", label: "Crafts" },
+  { value: "42", label: "Categories" }
+];
+
 export default function Hero() {
-  const { t } = useTranslation();
-
-  const stats = [
-    { value: "2,500+", label: t('stat_artisans') },
-    { value: "18K+",   label: t('stat_crafts') },
-    { value: "42",     label: t('stat_categories') }
-  ];
-
   return (
     <section className="ks-hero">
       <div className="ks-decoration ks-decoration-one" />
       <div className="ks-decoration ks-decoration-two" />
 
       <div className="ks-container">
-        <motion.div
-          className="ks-hero-content"
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
-          <span className="ks-eyebrow">✦ {t('hero_eyebrow')}</span>
+        <motion.div className="ks-hero-content" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <span className="ks-eyebrow">✦ AI-powered craft marketplace</span>
           <h1>
-            {t('hero_title_line1')}
+            India's craft.
             <br />
-            <span className="ks-gradient-text">{t('hero_title_line2')}</span>
+            <span className="ks-gradient-text">The world's canvas.</span>
           </h1>
-          <p className="ks-hero-description">{t('hero_description')}</p>
+          <p className="ks-hero-description">
+            KalaSetu connects India's extraordinary artisans with customers around the world — preserving traditional craftsmanship while creating new opportunities through AI.
+          </p>
           <div className="ks-hero-actions">
-            <a href="#discover" className="ks-btn ks-btn-primary">
-              {t('explore_crafts')} <FiArrowRight />
-            </a>
-            <a href="/create" className="ks-btn ks-btn-secondary">
-              <FiPlay /> {t('sell_your_craft')}
-            </a>
+            <a href="#discover" className="ks-btn ks-btn-primary">Explore Crafts <FiArrowRight /></a>
+            <a href="/create" className="ks-btn ks-btn-secondary"><FiPlay /> Sell Your Craft</a>
           </div>
           <div className="ks-stats">
             {stats.map((stat, index) => (
-              <motion.div
-                className="ks-stat"
-                key={index}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 + index * 0.1 }}
-              >
+              <motion.div className="ks-stat" key={stat.label} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 + index * 0.1 }}>
                 <span className="ks-stat-number">{stat.value}</span>
                 <span className="ks-stat-label">{stat.label}</span>
               </motion.div>
