@@ -1314,3 +1314,8 @@ header.ks-navbar,
     padding-bottom: 20px !important;
   }
 }
+
+/* Mobile-only manual refresh button */
+@media (max-width: 768px) {
+  .refresh-app-btn { display: inline-flex !important; }
+}

@@ -52,6 +52,14 @@ export default function Navbar() {
 
         <div className="ks-navbar-actions" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <LanguageSwitcher />
+          <button
+            className="ks-btn ks-btn-secondary refresh-app-btn"
+            onClick={() => window.location.reload(true)}
+            title="Reload app"
+            style={{ display: 'none' }}
+          >
+            ⟳
+          </button>
           <button className="ks-btn ks-btn-secondary" onClick={toggleTheme} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
             {dark ? <FiSun /> : <FiMoon />}
           </button>
