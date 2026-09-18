@@ -1,45 +1,23 @@
-const { MongoClient } = require('mongodb');
+// Mock API — no MongoDB, always works
+const products = [
+  { _id: '1', name: 'Blue Pottery Vase', description: 'Handmade blue pottery vase from Jaipur', price: 1200, image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=500', artisan: 'Ramesh Kumar', category: 'Pottery', material: 'Clay', tags: 'handmade,pottery,jaipur' },
+  { _id: '2', name: 'Handwoven Silk Saree', description: 'Pure Banarasi silk saree', price: 5500, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500', artisan: 'Sita Devi', category: 'Textiles', material: 'Silk', tags: 'silk,saree,banarasi' },
+  { _id: '3', name: 'Wooden Handicraft Box', description: 'Carved sheesham wood jewellery box', price: 800, image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=500', artisan: 'Mohan Lal', category: 'Woodwork', material: 'Wood', tags: 'wood,box,handmade' },
+  { _id: '4', name: 'Brass Diya Set', description: 'Traditional brass diyas, set of 5', price: 650, image: 'https://images.unsplash.com/photo-1604608672516-f1b9b1a0a1c1?w=500', artisan: 'Lakshmi Bai', category: 'Metalwork', material: 'Brass', tags: 'brass,diya' },
+  { _id: '5', name: 'Madhubani Painting', description: 'Traditional Madhubani art', price: 3200, image: 'https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?w=500', artisan: 'Anita Jha', category: 'Painting', material: 'Paper', tags: 'madhubani,painting' },
+  { _id: '6', name: 'Terracotta Jewellery', description: 'Handcrafted terracotta necklace', price: 450, image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500', artisan: 'Kavita Sharma', category: 'Jewellery', material: 'Terracotta', tags: 'terracotta,jewellery' },
+  { _id: '7', name: 'Kashmiri Pashmina Shawl', description: 'Authentic hand-embroidered pashmina', price: 8500, image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=500', artisan: 'Fatima Begum', category: 'Textiles', material: 'Pashmina', tags: 'pashmina,shawl' },
+  { _id: '8', name: 'Dhokra Tribal Art', description: 'Lost-wax brass casting figurine', price: 2800, image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=500', artisan: 'Budhan Murmu', category: 'Metalwork', material: 'Brass', tags: 'dhokra,tribal' },
+  { _id: '9', name: 'Kalamkari Wall Art', description: 'Hand-painted Kalamkari', price: 1800, image: 'https://images.unsplash.com/photo-1594322436404-5a0526db4d13?w=500', artisan: 'Ravi Naidu', category: 'Painting', material: 'Cotton', tags: 'kalamkari' },
+  { _id: '10', name: 'Bamboo Basket Set', description: 'Set of 3 handwoven bamboo baskets', price: 900, image: 'https://images.unsplash.com/photo-1595347097560-69238724e7bd?w=500', artisan: 'Lakhan Singh', category: 'Woodwork', material: 'Bamboo', tags: 'bamboo,basket' },
+  { _id: '11', name: 'Bandhani Dupatta', description: 'Traditional tie-dye Bandhani', price: 1500, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500', artisan: 'Priya Patel', category: 'Textiles', material: 'Cotton', tags: 'bandhani' },
+  { _id: '12', name: 'Bidri Silver Inlay', description: 'Bidriware vase with silver inlay', price: 4200, image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=500', artisan: 'Abdul Rahman', category: 'Metalwork', material: 'Silver', tags: 'bidri,silver' }
+];
 
-const MONGODB_URI = 'mongodb+srv://Admin:Admin123@kalasetu-cluster.mpljkgp.mongodb.net/kalasetu?appName=kalasetu-cluster';
-
-let cachedClient = null;
-let cachedDb = null;
-
-async function connectDB() {
-  if (cachedDb) return cachedDb;
-  const client = new MongoClient(MONGODB_URI, { serverSelectionTimeoutMS: 5000 });
-  await client.connect();
-  cachedClient = client;
-  cachedDb = client.db('kalasetu');
-  return cachedDb;
-}
-
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Content-Type', 'application/json');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
-
-  try {
-    const db = await connectDB();
-    const collection = db.collection('products');
-
-    if (req.method === 'GET') {
-      const products = await collection.find({}).sort({ createdAt: -1 }).toArray();
-      return res.status(200).json(products);
-    }
-
-    if (req.method === 'POST') {
-      const product = { ...req.body, createdAt: new Date() };
-      const result = await collection.insertOne(product);
-      return res.status(201).json({ _id: result.insertedId, ...product });
-    }
-
-    res.status(405).json({ error: 'Method not allowed' });
-  } catch (err) {
-    console.error('API error:', err);
-    res.status(500).json({ error: err.message });
-  }
+  res.status(200).json(products);
 };
