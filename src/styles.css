@@ -1124,3 +1124,136 @@ a {
   outline: 3px solid rgba(255,153,51,0.55);
   outline-offset: 3px;
 }
+/* ============================================================
+   MOBILE-ONLY OVERRIDES — only apply on phone screens
+   Desktop appearance is completely unchanged
+   ============================================================ */
+
+/* Force the root to fill the device width exactly */
+@media (max-width: 768px) {
+  html, body, #root {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+  }
+
+  /* Remove any fixed-width containers that push layout wider than screen */
+  body > div,
+  #root > div,
+  .ks-container,
+  .ks-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Navbar — stops the sidebar-looking squeeze */
+  header.ks-navbar,
+  .ks-navbar {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .ks-nav-inner {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  /* Hero — fits screen, text wraps properly */
+  .ks-hero,
+  section.ks-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 40px 20px !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  .ks-hero-content,
+  .ks-hero > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .ks-hero h1 {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .ks-hero p,
+  .ks-hero-description {
+    font-size: 0.95rem !important;
+    max-width: 100% !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Any grid — collapse to fit */
+  .ks-grid,
+  .ks-products-grid,
+  [class*="grid"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Any flex row that overflows */
+  .ks-hero-actions,
+  .ks-stats {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  .ks-hero-actions .ks-btn {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Images never overflow */
+  img, video, svg, canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Search input full width */
+  .ks-search-bar,
+  .ks-search-input,
+  .ks-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent horizontal scroll completely */
+  * {
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Language switcher fits */
+  .ks-lang-switch {
+    font-size: 0.85rem !important;
+    padding: 4px 8px !important;
+    flex-shrink: 0 !important;
+  }
+}
