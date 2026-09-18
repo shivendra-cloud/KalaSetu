@@ -1,49 +1,53 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ProductCard from './ProductCard';
+import { getApproved } from '../utils/productStore';
 
-export default function ProductGrid({ search, category }) {
+export default function ProductGrid({ search = '', category = 'All' }) {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to fetch:', err);
-        setLoading(false);
-      });
+    // Load approved products from local store
+    const load = () => setProducts(getApproved());
+    load();
+
+    // Listen for changes from admin panel (same tab)
+    const onChange = () => load();
+    window.addEventListener('storage', onChange);
+    window.addEventListener('kalasetu-products-updated', onChange);
+
+    return () => {
+      window.removeEventListener('storage', onChange);
+      window.removeEventListener('kalasetu-products-updated', onChange);
+    };
   }, []);
 
-  const filtered = products.filter(product => {
-    const matchesCategory = category === 'All' || product.category === category;
-    const matchesSearch = product.name?.toLowerCase().includes(search.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const q = (search || '').toLowerCase();
+  const filtered = products.filter(p => {
+    const matchesCat = category === 'All' || p.category === category;
+    const matchesSearch = !q ||
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.artisan || '').toLowerCase().includes(q);
+    return matchesCat && matchesSearch;
   });
 
-  if (loading) {
-    return (
-      <div className="ks-container" style={{ textAlign: 'center', padding: '4rem' }}>
-        <div className="ks-skeleton" style={{ width: '200px', height: '30px', margin: '0 auto' }} />
-      </div>
-    );
+  if (filtered.length === 0) {
+    return <p className="ks-center">{t('no_products') || 'No products found'}</p>;
   }
 
   return (
-    <div className="ks-container">
-      {filtered.length > 0 ? (
-        <div className="ks-product-grid">
-          {filtered.map(product => <ProductCard key={product._id} product={product} />)}
-        </div>
-      ) : (
-        <div style={{ padding: '80px 20px', textAlign: 'center' }}>
-          <h3>No crafts found</h3>
-          <p style={{ color: 'var(--ks-text-muted)' }}>Try another search or category.</p>
-        </div>
-      )}
+    <div className="ks-grid">
+      {filtered.map(p => (
+        <ProductCard
+          key={p._id}
+          product={{
+            ...p,
+            title: p.name,
+            title_hi: p.name_hi || p.name,
+          }}
+        />
+      ))}
     </div>
   );
 }
