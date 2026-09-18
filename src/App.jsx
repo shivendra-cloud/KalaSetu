@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import PricingAssistant from "./pages/PricingAssistant";
+import VoiceCataloger from "./pages/VoiceCataloger";
+import ImageStudio from "./pages/ImageStudio";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -37,6 +40,9 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/studio" element={<><Navbar /><ImageStudio /><Footer /></>} />
+        <Route path="/catalog" element={<><Navbar /><VoiceCataloger /><Footer /></>} />
+        <Route path="/price" element={<><Navbar /><PricingAssistant /><Footer /></>} />
         <Route path="/create" element={<><Navbar /><CreateProduct /><Footer /></>} />
       </Routes>
     </BrowserRouter>

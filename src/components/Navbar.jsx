@@ -39,6 +39,9 @@ export default function Navbar() {
 
         <nav className="ks-nav-links">
           <NavLink to="/" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Discover</NavLink>
+          <NavLink to="/studio" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Studio</NavLink>
+          <NavLink to="/catalog" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Catalog</NavLink>
+          <NavLink to="/price" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Price</NavLink>
           <NavLink to="/create" className={({ isActive }) => `ks-nav-link ${isActive ? "active" : ""}`}>Sell Craft</NavLink>
         </nav>
 
