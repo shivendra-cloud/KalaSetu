@@ -1617,3 +1617,208 @@ header.ks-navbar,
     min-width: auto;
   }
 }
+
+/* ============================================================
+   PRODUCT GRID — same card size on desktop & phone
+   ============================================================ */
+
+/* Desktop: constrain grid to phone-like card widths */
+@media (min-width: 769px) {
+  .ks-grid {
+    max-width: 1080px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+    gap: 20px !important;
+    padding: 0 24px !important;
+  }
+
+  .ks-product-card {
+    max-width: 260px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+
+  .ks-card-image-wrap {
+    aspect-ratio: 1 / 1 !important;
+    max-height: 260px !important;
+  }
+
+  .ks-product-info {
+    padding: 14px !important;
+  }
+
+  .ks-product-info h3 {
+    font-size: 15px !important;
+    line-height: 1.35 !important;
+    margin-bottom: 4px !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .ks-desc {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    margin: 2px 0 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .ks-artisan {
+    font-size: 12px !important;
+    margin: 2px 0 !important;
+  }
+
+  .ks-price-row {
+    margin-top: 8px !important;
+  }
+
+  .ks-price {
+    font-size: 16px !important;
+  }
+
+  .ks-btn-cart {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* ============================================================
+   DETAIL PAGE — mobile polish
+   ============================================================ */
+@media (max-width: 768px) {
+  .ks-detail-page {
+    padding: 12px 12px 40px !important;
+  }
+
+  .ks-back-btn {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    margin-bottom: 14px !important;
+  }
+
+  /* Image — nice square with rounded corners */
+  .ks-detail-image {
+    aspect-ratio: 1 / 1 !important;
+    max-height: 380px !important;
+    border-radius: 16px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .ks-detail-image img {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .ks-detail-category {
+    top: 12px !important;
+    left: 12px !important;
+    padding: 5px 12px !important;
+    font-size: 11px !important;
+  }
+
+  /* Title + info */
+  .ks-detail-title {
+    font-size: 1.4rem !important;
+    line-height: 1.25 !important;
+    margin: 16px 0 10px !important;
+    word-break: break-word !important;
+  }
+
+  .ks-detail-artisan {
+    font-size: 13.5px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.5 !important;
+  }
+
+  .ks-detail-price {
+    font-size: 1.8rem !important;
+    margin: 16px 0 !important;
+  }
+
+  /* Description box */
+  .ks-detail-description {
+    padding: 16px !important;
+    margin: 16px 0 !important;
+    border-radius: 12px !important;
+  }
+
+  .ks-detail-description h3 {
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .ks-detail-description p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Tags */
+  .ks-detail-tags {
+    gap: 6px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .ks-tag {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+  }
+
+  /* Buttons */
+  .ks-detail-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 60px 60px !important;
+    gap: 8px !important;
+    margin: 18px 0 !important;
+  }
+
+  .ks-btn-lg {
+    padding: 14px 12px !important;
+    font-size: 14px !important;
+    border-radius: 10px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  /* Trust badges — 3 in a row on phone */
+  .ks-detail-meta {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    padding: 12px 8px !important;
+  }
+
+  .ks-meta-item {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 4px !important;
+  }
+
+  .ks-meta-item span {
+    font-size: 20px !important;
+  }
+
+  .ks-meta-item strong {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  .ks-meta-item small {
+    font-size: 9.5px !important;
+    line-height: 1.3 !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .ks-detail-title { font-size: 1.25rem !important; }
+  .ks-detail-price { font-size: 1.6rem !important; }
+  .ks-detail-meta { grid-template-columns: 1fr 1fr 1fr !important; }
+  .ks-meta-item strong { font-size: 10px !important; }
+  .ks-meta-item small { font-size: 9px !important; }
+}
