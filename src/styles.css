@@ -559,7 +559,7 @@ a {
   50% {
     transform: translateY(-14px);
   }
-}
+
 
 @keyframes ksShimmer {
   100% {
@@ -907,7 +907,7 @@ header.ks-navbar,
     flex: none;
     min-width: auto;
   }
-}
+
 
 /* ============================================================
 
