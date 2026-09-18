@@ -6,12 +6,19 @@
     "url": "https://kala-setu-delta.vercel.app",
     "cleartext": false,
     "androidScheme": "https",
-    "allowNavigation": ["kala-setu-delta.vercel.app", "*.vercel.app"]
+    "allowNavigation": ["kala-setu-delta.vercel.app"]
   },
   "android": {
     "allowMixedContent": true,
     "captureInput": true,
     "webContentsDebuggingEnabled": false,
     "backgroundColor": "#0f0f0f"
+  },
+  "plugins": {
+    "StatusBar": {
+      "overlaysWebView": false,
+      "style": "DARK",
+      "backgroundColor": "#0f0f0f"
+    }
   }
 }

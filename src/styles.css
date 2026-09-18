@@ -1281,3 +1281,41 @@ a {
     filter: none !important;
   }
 }
+
+/* ============================================================
+   SAFE AREA — pads content below phone status bar
+   Desktop unaffected
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Push entire app down below status bar */
+  body, #root {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    padding-left: env(safe-area-inset-left, 0px) !important;
+    padding-right: env(safe-area-inset-right, 0px) !important;
+  }
+
+  /* Navbar respects top inset */
+  header.ks-navbar,
+  .ks-navbar {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 10px) !important;
+    margin-top: 0 !important;
+    top: 0 !important;
+  }
+
+  /* Hero padding adjusts for the fixed navbar */
+  .ks-hero {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 40px) !important;
+  }
+
+  /* Footer respects bottom inset */
+  .ks-footer {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
+  }
+}
+
+/* Kill any negative margins that might push navbar into status bar */
+header.ks-navbar,
+.ks-navbar {
+  margin-top: 0 !important;
+}
