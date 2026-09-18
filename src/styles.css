@@ -1584,3 +1584,140 @@ header.ks-navbar,
   .ks-detail-title { font-size: 1.25rem; }
   .ks-detail-price { font-size: 1.6rem; }
 }
+
+/* ============================================================
+   MOBILE DETAIL PAGE — STRONG OVERRIDES (force single column)
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* Single column: image on top, info below */
+  .ks-detail-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .ks-detail-image {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    max-height: none !important;
+    border-radius: 14px !important;
+    margin: 0 !important;
+  }
+
+  .ks-detail-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .ks-detail-info {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .ks-detail-title {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    margin: 8px 0 12px 0 !important;
+  }
+
+  .ks-detail-artisan {
+    font-size: 14px !important;
+    margin: 4px 0 !important;
+  }
+
+  .ks-detail-price {
+    font-size: 1.75rem !important;
+    margin: 14px 0 !important;
+  }
+
+  .ks-detail-description {
+    padding: 14px !important;
+    margin: 14px 0 !important;
+  }
+
+  .ks-detail-description p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Buttons: Add to Cart full width on top, heart + share below */
+  .ks-detail-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin: 16px 0 !important;
+    width: 100% !important;
+  }
+
+  .ks-detail-actions .ks-btn-primary,
+  .ks-btn-lg {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 15px !important;
+    min-width: 0 !important;
+    flex: none !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+  }
+
+  /* Wrap the 2 icon buttons in a row */
+  .ks-detail-actions .ks-btn-secondary {
+    width: 50% !important;
+    max-width: 50% !important;
+    padding: 12px 0 !important;
+    min-width: 0 !important;
+    flex: none !important;
+  }
+
+  /* Trust badges: vertical list on mobile */
+  .ks-detail-meta {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    padding: 14px !important;
+  }
+
+  .ks-meta-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    text-align: left !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid var(--border, #2a2a2a) !important;
+  }
+
+  .ks-meta-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .ks-meta-item span {
+    font-size: 24px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .ks-meta-item strong {
+    font-size: 13px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    display: block !important;
+  }
+
+  .ks-meta-item small {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    display: block !important;
+  }
+
+  /* Back button */
+  .ks-back-btn {
+    margin-bottom: 12px !important;
+    padding: 8px 12px !important;
+  }
+}
