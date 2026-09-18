@@ -890,19 +890,10 @@ header.ks-navbar,
    PRODUCT CARD — better sizing on desktop
    ============================================================ */
 
-  .ks-detail-image { aspect-ratio: 1 / 1; border-radius: 12px; }
-  .ks-detail-meta {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .ks-detail-actions {
-    flex-direction: column;
-  }
-  .ks-btn-lg {
-    min-width: auto;
-    width: 100%;
-    flex: none;
-  }
+  
+  
+  
+  
   .ks-btn-secondary {
     flex: none;
     min-width: auto;
@@ -915,23 +906,12 @@ header.ks-navbar,
    DETAIL PAGE — mobile polish
    ============================================================ */
 @media (max-width: 768px) {
-  .ks-detail-page {
-    padding: 12px 12px 40px !important;
-  }
+  
 
-  .ks-back-btn {
-    padding: 8px 12px !important;
-    font-size: 13px !important;
-    margin-bottom: 14px !important;
-  }
+  
 
   /* Image — nice square with rounded corners */
-  .ks-detail-image {
-    aspect-ratio: 1 / 1 !important;
-    max-height: 380px !important;
-    border-radius: 16px !important;
-    margin-bottom: 4px !important;
-  }
+  
 
   .ks-detail-image img {
     object-fit: cover !important;
@@ -939,38 +919,17 @@ header.ks-navbar,
     height: 100% !important;
   }
 
-  .ks-detail-category {
-    top: 12px !important;
-    left: 12px !important;
-    padding: 5px 12px !important;
-    font-size: 11px !important;
-  }
+  
 
   /* Title + info */
-  .ks-detail-title {
-    font-size: 1.4rem !important;
-    line-height: 1.25 !important;
-    margin: 16px 0 10px !important;
-    word-break: break-word !important;
-  }
+  
 
-  .ks-detail-artisan {
-    font-size: 13.5px !important;
-    margin-bottom: 6px !important;
-    line-height: 1.5 !important;
-  }
+  
 
-  .ks-detail-price {
-    font-size: 1.8rem !important;
-    margin: 16px 0 !important;
-  }
+  
 
   /* Description box */
-  .ks-detail-description {
-    padding: 16px !important;
-    margin: 16px 0 !important;
-    border-radius: 12px !important;
-  }
+  
 
   .ks-detail-description h3 {
     font-size: 13px !important;
@@ -983,45 +942,19 @@ header.ks-navbar,
   }
 
   /* Tags */
-  .ks-detail-tags {
-    gap: 6px !important;
-    margin-bottom: 16px !important;
-  }
+  
 
-  .ks-tag {
-    padding: 4px 10px !important;
-    font-size: 12px !important;
-  }
+  
 
   /* Buttons */
-  .ks-detail-actions {
-    display: grid !important;
-    grid-template-columns: 1fr 60px 60px !important;
-    gap: 8px !important;
-    margin: 18px 0 !important;
-  }
+  
 
-  .ks-btn-lg {
-    padding: 14px 12px !important;
-    font-size: 14px !important;
-    border-radius: 10px !important;
-    min-width: 0 !important;
-    width: 100% !important;
-    flex: none !important;
-  }
+  
 
   /* Trust badges — 3 in a row on phone */
-  .ks-detail-meta {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
-    padding: 12px 8px !important;
-  }
+  
 
-  .ks-meta-item {
-    flex-direction: column !important;
-    text-align: center !important;
-    gap: 4px !important;
-  }
+  
 
   .ks-meta-item span {
     font-size: 20px !important;
@@ -1040,9 +973,9 @@ header.ks-navbar,
 
 /* Very small phones */
 @media (max-width: 380px) {
-  .ks-detail-title { font-size: 1.25rem !important; }
-  .ks-detail-price { font-size: 1.6rem !important; }
-  .ks-detail-meta { grid-template-columns: 1fr 1fr 1fr !important; }
+  
+  
+  
   .ks-meta-item strong { font-size: 10px !important; }
   .ks-meta-item small { font-size: 9px !important; }
 }
@@ -1391,4 +1324,263 @@ header.ks-navbar,
     flex-direction: column;
     text-align: center;
   }
+}
+
+/* ============================================================
+   PRODUCT DETAIL PAGE
+   ============================================================ */
+
+.ks-detail-page {
+  background: var(--bg, #0f0f0f);
+  min-height: 100vh;
+  padding: 24px 16px 60px;
+}
+
+.ks-detail-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.ks-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--border, #2a2a2a);
+  color: var(--text, #fff);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 20px;
+  transition: background 0.15s;
+}
+.ks-back-btn:hover { background: var(--bg-card, #1a1a1a); }
+
+.ks-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.ks-detail-image {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-card, #1a1a1a);
+  aspect-ratio: 1 / 1;
+  max-height: 500px;
+  width: 100%;
+}
+
+.ks-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ks-detail-category {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ks-detail-info { padding-top: 8px; }
+
+.ks-detail-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text, #fff);
+  margin: 0 0 16px 0;
+}
+
+.ks-detail-artisan {
+  font-size: 15px;
+  color: var(--text-muted, #a0a0a0);
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+.ks-detail-label {
+  font-weight: 600;
+  color: var(--text, #fff);
+}
+
+.ks-detail-price {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 800;
+  color: var(--accent, #d97706);
+  margin: 20px 0;
+}
+
+.ks-detail-description {
+  padding: 20px;
+  background: var(--bg-card, #1a1a1a);
+  border: 1px solid var(--border, #2a2a2a);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.ks-detail-description h3 {
+  font-size: 13px;
+  color: var(--accent, #d97706);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.ks-detail-description p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text, #fff);
+  margin: 0;
+}
+
+.ks-detail-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ks-tag {
+  padding: 4px 12px;
+  background: rgba(217, 119, 6, 0.15);
+  color: var(--accent, #d97706);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ks-detail-actions {
+  display: flex;
+  gap: 10px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.ks-btn-lg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  min-width: 140px;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.ks-detail-actions .ks-btn-primary {
+  background: var(--accent, #d97706);
+  color: #fff;
+  flex: 1;
+  border: none;
+}
+.ks-detail-actions .ks-btn-primary:hover { background: var(--accent-hover, #b45309); }
+
+.ks-detail-actions .ks-btn-secondary {
+  background: transparent;
+  color: var(--text, #fff);
+  border: 1px solid var(--border, #2a2a2a);
+  flex: 0 0 auto;
+  min-width: 60px;
+}
+.ks-detail-actions .ks-btn-secondary:hover { background: var(--bg-card, #1a1a1a); }
+
+.ks-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-card, #1a1a1a);
+  border: 1px solid var(--border, #2a2a2a);
+  border-radius: 12px;
+}
+
+.ks-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ks-meta-item span { font-size: 22px; flex-shrink: 0; }
+.ks-meta-item strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text, #fff);
+  font-weight: 700;
+}
+.ks-meta-item small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted, #a0a0a0);
+}
+
+/* ---------- MOBILE DETAIL PAGE ---------- */
+@media (max-width: 768px) {
+  .ks-detail-page { padding: 16px 12px 40px; }
+
+  .ks-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .ks-detail-image {
+    max-height: 360px;
+    border-radius: 14px;
+  }
+
+  .ks-detail-title { font-size: 1.4rem; margin-bottom: 12px; }
+  .ks-detail-price { font-size: 1.8rem; margin: 14px 0; }
+
+  .ks-detail-description { padding: 16px; margin: 16px 0; }
+  .ks-detail-description p { font-size: 14px; }
+
+  .ks-detail-actions {
+    display: grid;
+    grid-template-columns: 1fr 52px 52px;
+    gap: 8px;
+  }
+  .ks-btn-lg {
+    padding: 14px 12px;
+    font-size: 14px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .ks-detail-meta {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 12px 8px;
+  }
+  .ks-meta-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+  .ks-meta-item span { font-size: 20px; }
+  .ks-meta-item strong { font-size: 11px; }
+  .ks-meta-item small { font-size: 9.5px; }
+}
+
+@media (max-width: 380px) {
+  .ks-detail-title { font-size: 1.25rem; }
+  .ks-detail-price { font-size: 1.6rem; }
 }
