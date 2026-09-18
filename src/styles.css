@@ -1762,3 +1762,290 @@ header.ks-navbar,
     flex-shrink: 0 !important;
   }
 }
+
+/* ============================================================
+   CREATE PRODUCT PAGE — GLOBAL FIX (PC + mobile)
+   Append-only. Nothing else touched.
+   ============================================================ */
+
+/* ---------- PAGE WRAPPER ---------- */
+.ks-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  box-sizing: border-box;
+}
+
+/* ---------- HEADINGS ---------- */
+.ks-page h1 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--text, #fff);
+  margin: 0 0 16px 0;
+}
+
+.ks-page h2 {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 700;
+  color: var(--text, #fff);
+  margin: 24px 0 12px 0;
+}
+
+.ks-page h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text, #fff);
+  margin: 20px 0 10px 0;
+}
+
+.ks-page p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted, #a0a0a0);
+  margin: 8px 0 16px 0;
+}
+
+/* ---------- FORM FIELDS (works on PC + mobile) ---------- */
+.ks-page input,
+.ks-page select,
+.ks-page textarea {
+  display: block;
+  width: 100%;
+  background: var(--bg-card, #1a1a1a);
+  color: var(--text, #ffffff);
+  border: 1px solid var(--border, #2a2a2a);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.4;
+  box-sizing: border-box;
+  margin: 0;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ks-page input:focus,
+.ks-page select:focus,
+.ks-page textarea:focus {
+  border-color: var(--accent, #d97706);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+}
+
+/* Kill browser autofill white background */
+.ks-page input:-webkit-autofill,
+.ks-page input:-webkit-autofill:hover,
+.ks-page input:-webkit-autofill:focus,
+.ks-page select:-webkit-autofill,
+.ks-page textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--text, #fff) !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(--bg-card, #1a1a1a) inset !important;
+  box-shadow: 0 0 0px 1000px var(--bg-card, #1a1a1a) inset !important;
+  caret-color: var(--text, #fff) !important;
+}
+
+/* Placeholder color */
+.ks-page input::placeholder,
+.ks-page textarea::placeholder {
+  color: var(--text-muted, #7a7a7a);
+  opacity: 1;
+}
+
+/* Select dropdown arrow spacing */
+.ks-page select {
+  padding-right: 36px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-muted, #a0a0a0) 50%),
+                    linear-gradient(135deg, var(--text-muted, #a0a0a0) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 2px),
+                       calc(100% - 13px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* ---------- LABELS ---------- */
+.ks-page label,
+.ks-page form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text, #f5f5f5);
+  margin: 16px 0 6px 0;
+  padding: 0;
+  line-height: 1.4;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* First label in a form shouldn't have top margin */
+.ks-page form > label:first-child,
+.ks-page form > div:first-child > label:first-child {
+  margin-top: 0;
+}
+
+/* ---------- TEXTAREA ---------- */
+.ks-page textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+/* ---------- FORM LAYOUT ---------- */
+.ks-page form {
+  display: block;
+  width: 100%;
+}
+
+/* Any two-column form groups -> proper gap */
+.ks-page form > div {
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+/* ---------- STEP INDICATORS (1 2 3) ---------- */
+.ks-page ol,
+.ks-page ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ks-page ol li,
+.ks-page ul li {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card, #1a1a1a);
+  border: 2px solid var(--border, #2a2a2a);
+  color: var(--text-muted, #a0a0a0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.ks-page ol li.active,
+.ks-page ul li.active {
+  background: var(--accent, #d97706);
+  border-color: var(--accent, #d97706);
+  color: #fff;
+}
+
+/* ---------- UPLOAD BOX ---------- */
+.ks-upload-box,
+[class*="upload-box"] {
+  display: block;
+  width: 100%;
+  padding: 32px 20px;
+  background: rgba(217, 119, 6, 0.08);
+  border: 2px dashed var(--accent, #d97706);
+  border-radius: 12px;
+  color: var(--accent, #d97706);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.15s;
+}
+
+.ks-upload-box:hover {
+  background: rgba(217, 119, 6, 0.15);
+}
+
+/* ---------- BUTTONS ---------- */
+.ks-page button[type="submit"],
+.ks-page .ks-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 12px;
+}
+
+.ks-page button[type="submit"]:hover,
+.ks-page .ks-btn-primary:hover {
+  opacity: 0.92;
+}
+
+/* ============================================================
+   DESKTOP-SPECIFIC — nicer 2-column form layout
+   ============================================================ */
+@media (min-width: 900px) {
+  /* If the form uses a .ks-form class with grid, keep it 2-col */
+  .ks-page .ks-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 24px;
+  }
+
+  .ks-page .ks-form .full {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ============================================================
+   MOBILE-SPECIFIC — single column, tighter
+   ============================================================ */
+@media (max-width: 768px) {
+  .ks-page {
+    padding: 20px 14px 60px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .ks-page h1 {
+    font-size: 1.55rem;
+    margin-bottom: 12px;
+  }
+
+  .ks-page input,
+  .ks-page select,
+  .ks-page textarea {
+    font-size: 16px;   /* prevents iOS zoom on focus */
+    padding: 12px 14px;
+  }
+
+  .ks-page label {
+    font-size: 13.5px;
+    margin: 14px 0 6px 0;
+  }
+
+  .ks-page ol li,
+  .ks-page ul li {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .ks-upload-box,
+  [class*="upload-box"] {
+    padding: 24px 16px;
+    font-size: 13.5px;
+  }
+}
+
+@media (max-width: 380px) {
+  .ks-page h1 { font-size: 1.35rem; }
+  .ks-page input,
+  .ks-page select,
+  .ks-page textarea {
+    font-size: 15px;
+    padding: 11px 12px;
+  }
+}
