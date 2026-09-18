@@ -1,216 +1,188 @@
 import { useState, useEffect } from 'react';
-import { FiRefreshCw, FiTrash2, FiPlus } from 'react-icons/fi';
-import {
-  getLocalProducts,
-  addLocalProduct,
-  deleteLocalProduct,
-} from '../utils/productStore';
 
 const ADMIN_PASSWORD = 'Admin123';
+const STORAGE_KEY = 'kalasetu_admin_products';
+
+const MOCK_PRODUCTS = [
+  { _id: 'm1', name: 'Blue Pottery Vase', price: 1200, category: 'Pottery', artisan: 'Ramesh Kumar', image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=500' },
+  { _id: 'm2', name: 'Handwoven Silk Saree', price: 5500, category: 'Textiles', artisan: 'Sita Devi', image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500' },
+  { _id: 'm3', name: 'Wooden Handicraft Box', price: 800, category: 'Woodwork', artisan: 'Mohan Lal', image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=500' },
+];
+
+function loadLocal() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveLocal(list) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch {}
+}
+
+// HARDCODED COLORS — no CSS variables, guaranteed visible
+const C = {
+  bg: '#0f0f0f',
+  card: '#1a1a1a',
+  border: '#2a2a2a',
+  text: '#ffffff',
+  textMuted: '#a0a0a0',
+  accent: '#d97706',
+  danger: '#ef4444',
+  success: '#22c55e',
+};
+
+const input = {
+  width: '100%',
+  padding: 12,
+  background: '#0f0f0f',
+  border: '1px solid #2a2a2a',
+  borderRadius: 8,
+  color: '#ffffff',
+  fontSize: 15,
+  marginBottom: 12,
+  boxSizing: 'border-box',
+  fontFamily: 'inherit',
+};
+
+const btn = {
+  padding: '12px 20px',
+  background: C.accent,
+  color: '#fff',
+  border: 'none',
+  borderRadius: 8,
+  fontSize: 15,
+  fontWeight: 600,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+};
+
+const btnGhost = {
+  padding: '12px 20px',
+  background: 'transparent',
+  color: '#ffffff',
+  border: '1px solid #2a2a2a',
+  borderRadius: 8,
+  fontSize: 15,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+};
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
   const [authed, setAuthed] = useState(false);
-  const [products, setProducts] = useState([]);
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
-  const [apiWorks, setApiWorks] = useState(null);
+  const [products, setProducts] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    name: '', description: '', price: '', category: 'Pottery',
-    material: '', artisan: '', image: ''
-  });
+  const [form, setForm] = useState({ name: '', price: '', category: 'Pottery', artisan: '', image: '', description: '' });
 
   useEffect(() => {
-    if (authed) loadProducts();
+    if (authed) setProducts([...loadLocal(), ...MOCK_PRODUCTS]);
   }, [authed]);
-
-  const loadProducts = async () => {
-    // Try API first (MongoDB)
-    try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        setProducts(data);
-        setApiWorks(true);
-        return;
-      }
-      // API returned empty — use local
-      setProducts(getLocalProducts());
-      setApiWorks(false);
-    } catch {
-      setProducts(getLocalProducts());
-      setApiWorks(false);
-    }
-  };
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setAuthed(true);
-      setError('');
-    } else {
-      setError('Wrong password');
-    }
+    if (password === ADMIN_PASSWORD) { setAuthed(true); setError(''); }
+    else setError('Wrong password');
   };
 
-  const handleAdd = async () => {
-    if (!newProduct.name || !newProduct.price) {
-      setError('Name and price are required');
-      return;
-    }
-    const product = { ...newProduct, price: Number(newProduct.price) };
-
-    // Try API first
-    try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin': password },
-        body: JSON.stringify(product)
-      });
-      if (res.ok) {
-        setNotice('Product added via API');
-        loadProducts();
-      } else {
-        throw new Error('API failed');
-      }
-    } catch {
-      // Fallback to local
-      addLocalProduct(product);
-      setNotice('Product added locally (shows on this device)');
-      loadProducts();
-    }
-
-    setNewProduct({ name: '', description: '', price: '', category: 'Pottery', material: '', artisan: '', image: '' });
+  const handleAdd = () => {
+    if (!form.name || !form.price) { setError('Name and price required'); return; }
+    const newProduct = {
+      _id: 'local_' + Date.now(),
+      name: form.name,
+      price: Number(form.price),
+      category: form.category,
+      artisan: form.artisan,
+      image: form.image || 'https://via.placeholder.com/300',
+      description: form.description,
+    };
+    const next = [newProduct, ...loadLocal()];
+    saveLocal(next);
+    setProducts([...next, ...MOCK_PRODUCTS]);
+    setForm({ name: '', price: '', category: 'Pottery', artisan: '', image: '', description: '' });
     setShowAdd(false);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this product?')) return;
-    if (id.startsWith('local_') || id.startsWith('m')) {
-      deleteLocalProduct(id);
-      setNotice('Deleted');
-      loadProducts();
-      return;
-    }
-    try {
-      const res = await fetch(`/api/products?id=${id}`, {
-        method: 'DELETE',
-        headers: { 'x-admin': password }
-      });
-      if (res.ok) {
-        setNotice('Deleted');
-        loadProducts();
-      } else {
-        throw new Error();
-      }
-    } catch {
-      deleteLocalProduct(id);
-      setNotice('Deleted locally');
-      loadProducts();
-    }
+  const handleDelete = (id) => {
+    if (!id.startsWith('local_') && !id.startsWith('m')) return;
+    const next = loadLocal().filter(p => p._id !== id);
+    saveLocal(next);
+    setProducts([...next, ...MOCK_PRODUCTS]);
   };
 
   if (!authed) {
     return (
-      <div style={{ maxWidth: 400, margin: '60px auto', padding: 24 }}>
-        <h1 style={{ fontSize: '1.5rem', marginBottom: 16 }}>Admin Login</h1>
-        <form onSubmit={handleLogin} style={{ display: 'grid', gap: 12 }}>
-          <input
-            type="password"
-            placeholder="Enter admin password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="ks-search-input"
-            autoFocus
-          />
-          <button type="submit" className="ks-btn ks-btn-primary">Login</button>
-        </form>
-        {error && (
-          <div style={{ marginTop: 12, padding: 10, background: '#fee2e2', color: '#991b1b', borderRadius: 8, fontSize: '0.9rem' }}>
-            {error}
-          </div>
-        )}
-        <p style={{ marginTop: 12, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          Demo password: <strong>Admin123</strong>
-        </p>
+      <div style={{ minHeight: '100vh', background: C.bg, padding: 24 }}>
+        <div style={{ maxWidth: 400, margin: '60px auto', background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24 }}>
+          <h1 style={{ fontSize: 24, marginBottom: 16, color: C.text }}>Admin Login</h1>
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={input}
+              autoFocus
+            />
+            <button type="submit" style={{ ...btn, width: '100%' }}>Login</button>
+          </form>
+          {error && <p style={{ color: C.danger, marginTop: 12, fontSize: 14 }}>{error}</p>}
+          <p style={{ color: C.textMuted, marginTop: 12, fontSize: 13 }}>Password: Admin123</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: '1.5rem' }}>Admin Panel</h1>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            {products.length} products · {apiWorks ? 'API connected' : 'Local mode'}
+    <div style={{ minHeight: '100vh', background: C.bg, padding: 24 }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+          <h1 style={{ fontSize: 22, color: C.text }}>Admin Panel</h1>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button style={btnGhost} onClick={() => setShowAdd(!showAdd)}>+ Add</button>
+            <button style={btnGhost} onClick={() => { setAuthed(false); setPassword(''); }}>Logout</button>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="ks-btn ks-btn-secondary" onClick={loadProducts}>
-            <FiRefreshCw /> Refresh
-          </button>
-          <button className="ks-btn ks-btn-primary" onClick={() => setShowAdd(!showAdd)}>
-            <FiPlus /> Add Product
-          </button>
-        </div>
-      </div>
 
-      {!apiWorks && (
-        <div style={{ padding: 12, background: '#fef3c7', color: '#92400e', borderRadius: 8, marginBottom: 16, fontSize: '0.9rem' }}>
-          ⚠️ API unavailable (MongoDB not reachable from Vercel). Products added here are saved to this browser only.
-        </div>
-      )}
+        <p style={{ color: C.textMuted, marginBottom: 16, fontSize: 14 }}>
+          {products.length} products · Local mode (saved in this browser)
+        </p>
 
-      {notice && (
-        <div style={{ padding: 12, background: '#d1fae5', color: '#065f46', borderRadius: 8, marginBottom: 16 }}>
-          {notice}
-          <button onClick={() => setNotice('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer' }}>×</button>
-        </div>
-      )}
-
-      {showAdd && (
-        <div style={{ padding: 20, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, marginBottom: 20 }}>
-          <h3 style={{ marginBottom: 16 }}>Add New Product</h3>
-          <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-            <input className="ks-search-input" placeholder="Product name *" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} />
-            <input className="ks-search-input" placeholder="Price (₹) *" type="number" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} />
-            <input className="ks-search-input" placeholder="Artisan name" value={newProduct.artisan} onChange={e => setNewProduct({...newProduct, artisan: e.target.value})} />
-            <input className="ks-search-input" placeholder="Material" value={newProduct.material} onChange={e => setNewProduct({...newProduct, material: e.target.value})} />
-            <select className="ks-select" value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})}>
-              {['Pottery','Textiles','Woodwork','Metalwork','Painting','Jewellery','Handicraft'].map(c => <option key={c}>{c}</option>)}
+        {showAdd && (
+          <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20, marginBottom: 20 }}>
+            <h3 style={{ color: C.text, marginBottom: 16, fontSize: 16 }}>Add New Product</h3>
+            <input style={input} placeholder="Name *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+            <input style={input} placeholder="Price (₹) *" type="number" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
+            <input style={input} placeholder="Artisan" value={form.artisan} onChange={e => setForm({ ...form, artisan: e.target.value })} />
+            <input style={input} placeholder="Image URL" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} />
+            <select style={input} value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+              {['Pottery', 'Textiles', 'Woodwork', 'Metalwork', 'Painting', 'Jewellery', 'Handicraft'].map(c => <option key={c} value={c}>{c}</option>)}
             </select>
-            <input className="ks-search-input" placeholder="Image URL" value={newProduct.image} onChange={e => setNewProduct({...newProduct, image: e.target.value})} />
-            <textarea className="ks-search-input" placeholder="Description" rows={3} style={{ gridColumn: '1 / -1' }} value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} />
-          </div>
-          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-            <button className="ks-btn ks-btn-primary" onClick={handleAdd}>Save Product</button>
-            <button className="ks-btn ks-btn-secondary" onClick={() => setShowAdd(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
-
-      <div style={{ display: 'grid', gap: 12 }}>
-        {products.map(p => (
-          <div key={p._id} style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto', gap: 16, alignItems: 'center', padding: 12, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12 }}>
-            <img src={p.image || 'https://via.placeholder.com/80'} alt="" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8 }} onError={(e) => { e.target.src = 'https://via.placeholder.com/80'; }} />
-            <div>
-              <div style={{ fontWeight: 700, marginBottom: 4 }}>{p.name || p.title}</div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {p.artisan && `${p.artisan} · `}{p.category} {p.price && `· ₹${p.price}`}
-              </div>
+            <textarea style={{ ...input, minHeight: 80 }} placeholder="Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button style={btn} onClick={handleAdd}>Save</button>
+              <button style={btnGhost} onClick={() => setShowAdd(false)}>Cancel</button>
             </div>
-            <button onClick={() => handleDelete(p._id)} className="ks-btn ks-btn-secondary" style={{ color: '#ef4444' }}>
-              <FiTrash2 />
-            </button>
-          </div>
-        ))}
-        {products.length === 0 && (
-          <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>
-            No products. Click "Add Product" to create one.
           </div>
         )}
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          {products.map(p => (
+            <div key={p._id} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 16, display: 'flex', gap: 16, alignItems: 'center' }}>
+              <img
+                src={p.image}
+                alt=""
+                style={{ width: 70, height: 70, objectFit: 'cover', borderRadius: 8, background: '#333' }}
+                onError={e => { e.target.src = 'https://via.placeholder.com/70'; }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ color: C.text, fontWeight: 700, marginBottom: 4 }}>{p.name}</div>
+                <div style={{ color: C.textMuted, fontSize: 13 }}>{p.artisan || '—'} · {p.category} · ₹{p.price}</div>
+              </div>
+              <button onClick={() => handleDelete(p._id)} style={{ ...btnGhost, color: C.danger, padding: '8px 12px' }}>
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
