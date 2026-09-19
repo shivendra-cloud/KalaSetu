@@ -1,6 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { useState } from "react";
 import { FiArrowLeft, FiArrowRight, FiCheck, FiUpload } from "react-icons/fi";
+import { addProduct } from '../utils/productStore';
+
+const STEPS = [
+  { num: 1, label: 'Craft Details' },
+  { num: 2, label: 'AI Story' },
+  { num: 3, label: 'Preview' },
+];
 
 export default function CreateProduct() {
   const { t } = useTranslation();
@@ -8,32 +15,22 @@ export default function CreateProduct() {
   const [generating, setGenerating] = useState(false);
   const [published, setPublished] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
-  const [form, setForm] = useState({ 
-    name: "", 
-    category: "", 
-    material: "", 
-    price: "", 
-    story: "",
-    artisanName: "",
-    location: "",
-    image: ""
+  const [form, setForm] = useState({
+    name: "", category: "", material: "", price: "", story: "",
+    artisanName: "", location: "", image: ""
   });
 
-  const update = (field, value) => {
-    setForm({ ...form, [field]: value });
-  };
+  const update = (field, value) => setForm({ ...form, [field]: value });
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result;
-        setImagePreview(base64);
-        update("image", base64);
-      };
-      reader.readAsDataURL(file);
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+      update("image", reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const generateAI = async () => {
@@ -42,304 +39,206 @@ export default function CreateProduct() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: form.name, 
-          material: form.material, 
-          craftType: form.category 
-        })
+        body: JSON.stringify({ name: form.name, material: form.material, craftType: form.category })
       });
       const data = await res.json();
       update("story", data.description || `${form.name} - A beautiful handcrafted piece made with ${form.material}.`);
-    } catch (error) {
+    } catch {
       update("story", `${form.name} - A beautiful handcrafted piece made with ${form.material}, representing India's rich artisan heritage.`);
     }
     setGenerating(false);
     setStep(2);
   };
 
-  const publish = async () => {
-    try {
-      await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          material: form.material,
-          craftType: form.category,
-          price: Number(form.price),
-          description: form.story,
-          tags: "handmade, indian, artisan",
-          category: form.category || "Handmade Craft",
-          artisanStory: form.story,
-          artisanName: form.artisanName,
-          location: form.location,
-          image: form.image
-        })
-      });
-      setPublished(true);
-    } catch (error) {
-      alert('Failed to publish. Please try again.');
-    }
+  const publish = () => {
+    // Save via productStore → admin panel will see it as "pending"
+    addProduct({
+      name: form.name || 'Untitled Craft',
+      description: form.story,
+      price: Number(form.price) || 0,
+      image: form.image || 'https://via.placeholder.com/400',
+      artisan: form.artisanName,
+      location: form.location,
+      category: form.category || 'Handicraft',
+      material: form.material,
+      status: 'pending',
+    });
+    setPublished(true);
+    setTimeout(() => {
+      setPublished(false);
+      setForm({ name: "", category: "", material: "", price: "", story: "", artisanName: "", location: "", image: "" });
+      setImagePreview(null);
+      setStep(1);
+    }, 3000);
   };
 
-  if (published) {
-    return (
-      <main className="ks-create">
-        <div className="ks-container">
-          <div className="ks-success">
-            <div className="ks-success-icon">
-              <FiCheck size={34} />
-            </div>
-            <h2>Your craft is now live ✨</h2>
-            <p>Your creation has been submitted for review. It will appear on the marketplace once approved.</p>
-            <button 
-              className="ks-btn ks-btn-primary" 
-              onClick={() => { 
-                setPublished(false); 
-                setStep(1); 
-                setForm({ name: "", category: "", material: "", price: "", story: "", artisanName: "", location: "", image: "" });
-                setImagePreview(null);
-              }}
+  return (
+    <div className="ks-page ks-create-page">
+      {/* Header */}
+      <span className="ks-eyebrow">Sell with KalaSetu</span>
+      <h1>Tell the world your story</h1>
+      <p>Add your craft once. Let AI help transform your craftsmanship into a story customers around the world can understand.</p>
+
+      {/* ---------- STEP INDICATORS ---------- */}
+      <div className="ks-steps">
+        {STEPS.map((s, i) => (
+          <div
+            key={s.num}
+            className={`ks-step ${step === s.num ? 'active' : ''} ${step > s.num ? 'done' : ''}`}
+          >
+            <span className="ks-step-num">
+              {step > s.num ? <FiCheck size={14} /> : s.num}
+            </span>
+            <span className="ks-step-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* ---------- STEP 1: CRAFT DETAILS ---------- */}
+      {step === 1 && (
+        <div className="ks-form-card">
+          <div className="ks-form-group">
+            <label>Artisan Name *</label>
+            <input
+              type="text"
+              value={form.artisanName}
+              onChange={e => update("artisanName", e.target.value)}
+              placeholder="e.g. Rajesh Kumar"
+            />
+          </div>
+
+          <div className="ks-form-group">
+            <label>Location</label>
+            <input
+              type="text"
+              value={form.location}
+              onChange={e => update("location", e.target.value)}
+              placeholder="e.g. Jaipur, Rajasthan"
+            />
+          </div>
+
+          <div className="ks-form-group">
+            <label>Craft Name *</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={e => update("name", e.target.value)}
+              placeholder="e.g. Handwoven Banarasi Dupatta"
+            />
+          </div>
+
+          <div className="ks-form-group">
+            <label>Category</label>
+            <select
+              value={form.category}
+              onChange={e => update("category", e.target.value)}
             >
-              Add another craft
+              <option value="">Select category</option>
+              {['Pottery','Textiles','Woodwork','Metalwork','Painting','Jewellery','Handicraft'].map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="ks-form-group">
+            <label>Material</label>
+            <input
+              type="text"
+              value={form.material}
+              onChange={e => update("material", e.target.value)}
+              placeholder="e.g. Pure Silk"
+            />
+          </div>
+
+          <div className="ks-form-group">
+            <label>Price (₹)</label>
+            <input
+              type="number"
+              value={form.price}
+              onChange={e => update("price", e.target.value)}
+              placeholder="0"
+            />
+          </div>
+
+          <div className="ks-form-group">
+            <label>Product Image</label>
+            <label className="ks-upload-box" htmlFor="craft-image">
+              <FiUpload size={28} />
+              <span>Click to upload product image</span>
+              <input
+                id="craft-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+            </label>
+            {imagePreview && (
+              <img src={imagePreview} alt="Preview" className="ks-image-preview" />
+            )}
+          </div>
+
+          <div className="ks-form-group">
+            <label>Tell us about your craft</label>
+            <textarea
+              rows={4}
+              value={form.story}
+              onChange={e => update("story", e.target.value)}
+              placeholder="Describe how it is made, where the tradition comes from, what makes it special..."
+            />
+          </div>
+
+          <div className="ks-form-actions">
+            <button className="ks-btn-primary" onClick={generateAI} disabled={generating || !form.name}>
+              {generating ? 'Generating...' : 'Continue'} <FiArrowRight />
             </button>
           </div>
         </div>
-      </main>
-    );
-  }
+      )}
 
-  return (
-    <main className="ks-create">
-      <div className="ks-container">
-        <div className="ks-create-header">
-          <span className="ks-eyebrow">{t('sell_with_kalasetu')}</span>
-          <h1>{t('tell_the_world_your_story')}</h1>
-          <p>
-            Add your craft once. Let AI help transform your craftsmanship 
-            into a story customers around the world can understand.
-          </p>
-        </div>
-
-        <div className="ks-stepper">
-          {[1, 2, 3].map((item, index) => (
-            <div key={item} className={`ks-step ${step >= item ? "active" : ""}`}>
-              <div className="ks-step-number">
-                {step > item ? <FiCheck /> : item}
-              </div>
-              <span className="ks-step-label">
-                {item === 1 && "Craft Details"}
-                {item === 2 && "AI Story"}
-                {item === 3 && "Preview"}
-              </span>
-              {index < 2 && <div className="ks-step-line" />}
-            </div>
-          ))}
-        </div>
-
+      {/* ---------- STEP 2: AI STORY ---------- */}
+      {step === 2 && (
         <div className="ks-form-card">
-          {step === 1 && (
-            <>
-              <div className="ks-form-grid">
-                <div className="ks-form-group">
-                  <label className="ks-form-label">Artisan Name *</label>
-                  <input 
-                    className="ks-input" 
-                    value={form.artisanName} 
-                    onChange={(e) => update("artisanName", e.target.value)} 
-                    placeholder={t('e_g_rajesh_kumar')} 
-                    required 
-                  />
-                </div>
-
-                <div className="ks-form-group">
-                  <label className="ks-form-label">{t('location')}</label>
-                  <input 
-                    className="ks-input" 
-                    value={form.location} 
-                    onChange={(e) => update("location", e.target.value)} 
-                    placeholder={t('e_g_jaipur_rajasthan')} 
-                  />
-                </div>
-
-                <div className="ks-form-group">
-                  <label className="ks-form-label">Craft name *</label>
-                  <input 
-                    className="ks-input" 
-                    value={form.name} 
-                    onChange={(e) => update("name", e.target.value)} 
-                    placeholder={t('e_g_handwoven_banarasi_dupatta')} 
-                    required 
-                  />
-                </div>
-
-                <div className="ks-form-group">
-                  <label className="ks-form-label">{t('category')}</label>
-                  <select 
-                    className="ks-select" 
-                    value={form.category} 
-                    onChange={(e) => update("category", e.target.value)}
-                  >
-                    <option value="">{t('select_category')}</option>
-                    <option>{t('textiles')}</option>
-                    <option>{t('pottery')}</option>
-                    <option>{t('jewellery')}</option>
-                    <option>{t('woodcraft')}</option>
-                    <option>{t('paintings')}</option>
-                    <option>{t('home_decor')}</option>
-                  </select>
-                </div>
-
-                <div className="ks-form-group">
-                  <label className="ks-form-label">{t('material')}</label>
-                  <input 
-                    className="ks-input" 
-                    value={form.material} 
-                    onChange={(e) => update("material", e.target.value)} 
-                    placeholder={t('e_g_pure_silk')} 
-                  />
-                </div>
-
-                <div className="ks-form-group">
-                  <label className="ks-form-label">Price (₹)</label>
-                  <input 
-                    className="ks-input" 
-                    type="number" 
-                    value={form.price} 
-                    onChange={(e) => update("price", e.target.value)} 
-                    placeholder={t('0')} 
-                  />
-                </div>
-
-                <div className="ks-form-group full">
-                  <label className="ks-form-label">{t('product_image')}</label>
-                  <div style={{
-                    border: '2px dashed #D4AF37',
-                    borderRadius: '10px',
-                    padding: '20px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    background: '#FFFDD0'
-                  }}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      style={{ display: 'none' }}
-                      id="image-upload"
-                    />
-                    <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
-                      {imagePreview ? (
-                        <img 
-                          src={imagePreview} 
-                          alt="Preview" 
-                          style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '10px' }}
-                        />
-                      ) : (
-                        <>
-                          <FiUpload size={30} style={{ color: '#D4AF37', marginBottom: '10px' }} />
-                          <p style={{ color: '#718096' }}>{t('click_to_upload_product_image')}</p>
-                        </>
-                      )}
-                    </label>
-                  </div>
-                </div>
-
-                <div className="ks-form-group full">
-                  <label className="ks-form-label">{t('tell_us_about_your_craft')}</label>
-                  <textarea 
-                    className="ks-textarea" 
-                    value={form.story} 
-                    onChange={(e) => update("story", e.target.value)} 
-                    placeholder="Describe how it is made, where the tradition comes from, what makes it special..." 
-                  />
-                </div>
-              </div>
-
-              <div className="ks-ai-box">
-                <div className="ks-ai-header">
-                  <div className="ks-ai-title">
-                    ✨ AI Story Assistant
-                  </div>
-                  <button 
-                    className="ks-btn ks-btn-primary" 
-                    onClick={generateAI} 
-                    disabled={generating}
-                  >
-                    {generating ? "Creating..." : "Generate with AI"}
-                  </button>
-                </div>
-                <p className="ks-ai-description">
-                  KalaSetu AI turns your craft details into a compelling 
-                  marketplace description designed for global customers.
-                </p>
-              </div>
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <h2>{t('your_ai_generated_story')}</h2>
-              <textarea 
-                className="ks-textarea" 
-                value={form.story} 
-                onChange={(e) => update("story", e.target.value)} 
-              />
-              <div className="ks-form-actions">
-                <button 
-                  className="ks-btn ks-btn-secondary" 
-                  onClick={() => setStep(1)}
-                >
-                  <FiArrowLeft /> Back
-                </button>
-                <button 
-                  className="ks-btn ks-btn-primary" 
-                  onClick={() => setStep(3)}
-                >
-                  Preview <FiArrowRight />
-                </button>
-              </div>
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                {imagePreview && (
-                  <img 
-                    src={imagePreview} 
-                    alt={form.name} 
-                    style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '15px' }}
-                  />
-                )}
-              </div>
-              <span className="ks-product-category">
-                {form.category || "Craft"}
-              </span>
-              <h2>{form.name || "Untitled Craft"}</h2>
-              {form.artisanName && <p><strong>{t('artisan')}</strong> {form.artisanName}</p>}
-              {form.location && <p><strong>{t('location')}</strong> {form.location}</p>}
-              <p><strong>{t('material')}</strong> {form.material}</p>
-              <p className="ks-product-ai">{form.story}</p>
-              <h2>₹{form.price || "0"}</h2>
-              <div className="ks-form-actions">
-                <button 
-                  className="ks-btn ks-btn-secondary" 
-                  onClick={() => setStep(2)}
-                >
-                  <FiArrowLeft /> Back
-                </button>
-                <button 
-                  className="ks-btn ks-btn-primary" 
-                  onClick={publish}
-                >
-                  <FiCheck /> Publish Craft
-                </button>
-              </div>
-            </>
-          )}
+          <h2>Your AI-generated story</h2>
+          <textarea
+            rows={6}
+            value={form.story}
+            onChange={e => update("story", e.target.value)}
+          />
+          <div className="ks-form-actions">
+            <button className="ks-btn-secondary" onClick={() => setStep(1)}>
+              <FiArrowLeft /> Back
+            </button>
+            <button className="ks-btn-primary" onClick={() => setStep(3)}>
+              Continue <FiArrowRight />
+            </button>
+          </div>
         </div>
-      </div>
-    </main>
+      )}
+
+      {/* ---------- STEP 3: PREVIEW ---------- */}
+      {step === 3 && (
+        <div className="ks-form-card">
+          <h2>Preview</h2>
+          <div className="ks-preview">
+            <img src={form.image || 'https://via.placeholder.com/400'} alt="" />
+            <div>
+              <h3>{form.name || 'Untitled Craft'}</h3>
+              <p>By {form.artisanName || 'Anonymous'}</p>
+              <p className="ks-preview-price">₹{form.price || 0}</p>
+              <p>{form.story}</p>
+            </div>
+          </div>
+          <div className="ks-form-actions">
+            <button className="ks-btn-secondary" onClick={() => setStep(2)}>
+              <FiArrowLeft /> Back
+            </button>
+            <button className="ks-btn-primary" onClick={publish} disabled={published}>
+              {published ? '✓ Submitted for approval' : 'Submit for Approval'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
