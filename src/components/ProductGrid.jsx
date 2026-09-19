@@ -3,40 +3,44 @@ import { useTranslation } from 'react-i18next';
 import ProductCard from './ProductCard';
 import { getApproved } from '../utils/productStore';
 
+// Normalize category: lowercase, remove trailing 's', trim
+function normalizeCat(s) {
+  if (!s) return '';
+  return String(s).toLowerCase().trim().replace(/s$/, '');
+}
+
 export default function ProductGrid({ search = '', category = 'All' }) {
   const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // ---------- Load products (local + API) ----------
   const loadProducts = async () => {
-    // 1. Load from local store immediately (fast render)
-    const local = getApproved();
-    if (local.length > 0) {
-      setProducts(local);
-      setLoading(false);
-    }
+    // 1. Local first — instant render
+    const local = getApproved() || [];
+    setProducts(local);
 
-    // 2. Fetch from API (MongoDB) in background
+    // 2. API fetch
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
-      if (res.ok) {
-        const apiData = await res.json();
-        if (Array.isArray(apiData) && apiData.length > 0) {
-          // Merge API + local, dedupe by _id
-          const merged = [...apiData, ...local];
-          const seen = new Set();
-          const unique = merged.filter(p => {
-            const id = String(p._id || p.id);
-            if (seen.has(id)) return false;
-            seen.add(id);
-            return true;
-          });
-          setProducts(unique);
-        }
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const apiData = await res.json();
+
+      if (Array.isArray(apiData) && apiData.length > 0) {
+        // Merge: API products + local, dedupe by _id
+        const merged = [...apiData, ...local];
+        const seen = new Set();
+        const unique = merged.filter(p => {
+          const id = String(p._id || p.id || '');
+          if (!id || seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        });
+        setProducts(unique);
       }
     } catch (err) {
-      console.warn('API fetch failed, using local only:', err.message);
+      console.warn('API fetch failed:', err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -45,7 +49,6 @@ export default function ProductGrid({ search = '', category = 'All' }) {
   useEffect(() => {
     loadProducts();
 
-    // Refresh when admin updates products
     const onChange = () => loadProducts();
     window.addEventListener('storage', onChange);
     window.addEventListener('kalasetu-products-updated', onChange);
@@ -55,40 +58,44 @@ export default function ProductGrid({ search = '', category = 'All' }) {
     };
   }, []);
 
-  // ---------- Filter ----------
+  // ---------- FILTER ----------
   const q = (search || '').toLowerCase().trim();
+  const normFilterCat = normalizeCat(category);
+
   const filtered = products.filter(p => {
-    const pCat = p.category || 'Handicraft';
-    const matchesCat = category === 'All' || pCat.toLowerCase() === category.toLowerCase();
+    const pCat = normalizeCat(p.category || 'handicraft');
+
+    // Category match: exact normalized OR empty filter
+    const matchesCat = category === 'All' || normFilterCat === '' || pCat === normFilterCat;
+
+    // Search match
     const matchesSearch = !q ||
       (p.name || p.title || '').toLowerCase().includes(q) ||
       (p.artisan || '').toLowerCase().includes(q) ||
       (p.description || '').toLowerCase().includes(q);
+
     return matchesCat && matchesSearch;
   });
 
   // Sort by category then name
   const sorted = [...filtered].sort((a, b) => {
-    const catA = (a.category || 'Handicraft').toLowerCase();
-    const catB = (b.category || 'Handicraft').toLowerCase();
+    const catA = normalizeCat(a.category || 'handicraft');
+    const catB = normalizeCat(b.category || 'handicraft');
     if (catA !== catB) return catA.localeCompare(catB);
-    return (a.name || '').localeCompare(b.name || '');
+    return (a.name || a.title || '').localeCompare(b.name || b.title || '');
   });
 
-  // ---------- Render ----------
-  if (loading) {
-    return (
-      <div className="ks-center" style={{ padding: '60px 20px' }}>
-        <p>{t('loading') || 'Loading...'}</p>
-      </div>
-    );
+  // ---------- RENDER ----------
+  if (loading && products.length === 0) {
+    return <p className="ks-center">{t('loading') || 'Loading crafts...'}</p>;
   }
 
   if (sorted.length === 0) {
     return (
-      <div className="ks-center" style={{ padding: '60px 20px' }}>
-        <p>{t('no_products') || 'No products found'}</p>
-      </div>
+      <p className="ks-center">
+        {t('no_products') || 'No products found'}
+        {category !== 'All' && <><br /><small>Try selecting "All" to see everything</small></>}
+      </p>
     );
   }
 

@@ -1,34 +1,55 @@
-import { FiSearch, FiSliders } from "react-icons/fi";
+import { useTranslation } from 'react-i18next';
 
-const categories = ["All", "Textiles", "Pottery", "Woodcraft", "Jewellery", "Paintings", "Home Decor"];
+// Match the ACTUAL categories used in product data
+const CATEGORIES = [
+  'All',
+  'Pottery',
+  'Textiles',
+  'Painting',
+  'Woodwork',
+  'Metalwork',
+  'Jewellery',
+  'Handicraft',
+];
 
-export default function SearchFilters({ category, setCategory, search, setSearch }) {
+export default function SearchFilters({ search, setSearch, category, setCategory }) {
+  const { t } = useTranslation();
+
   return (
-    <section className="ks-discover" id="discover">
-      <div className="ks-container">
-        <div className="ks-toolbar">
-          <div className="ks-search">
-            <FiSearch className="ks-search-icon" />
-            <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search handcrafted treasures..." aria-label="Search products" />
-          </div>
-          <select className="ks-sort" aria-label="Sort products">
-            <option>Featured</option>
-            <option>Newest</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-            <option>Top Rated</option>
-          </select>
-          <button className="ks-btn ks-btn-secondary" aria-label="Open advanced filters"><FiSliders /> Filters</button>
-        </div>
-
-        <div className="ks-filter-chips" role="group" aria-label="Product categories">
-          {categories.map((item) => (
-            <button key={item} className={`ks-filter-chip ${category === item ? "active" : ""}`} onClick={() => setCategory(item)} aria-pressed={category === item}>
-              {item}
-            </button>
+    <div className="ks-filters-wrap">
+      <div className="ks-search-bar">
+        <input
+          type="text"
+          placeholder={t('search_placeholder') || 'Search handcrafted treasures...'}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="ks-search-input"
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="ks-select"
+        >
+          {CATEGORIES.map(c => (
+            <option key={c} value={c}>
+              {c === 'All' ? (t('all_categories') || 'All') : c}
+            </option>
           ))}
-        </div>
+        </select>
       </div>
-    </section>
+
+      {/* Category pills */}
+      <div className="ks-category-pills">
+        {CATEGORIES.map(c => (
+          <button
+            key={c}
+            onClick={() => setCategory(c)}
+            className={`ks-pill ${category === c ? 'active' : ''}`}
+          >
+            {c === 'All' ? (t('all_categories') || 'All') : c}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
