@@ -2255,3 +2255,109 @@ header.ks-navbar,
     padding: 20px 16px !important;
   }
 }
+
+/* ============================================================
+   SELL CRAFT — DESKTOP full-width 2-column layout
+   Mobile keeps single column (untouched)
+   ============================================================ */
+
+@media (min-width: 900px) {
+
+  /* Page container — full width, centered with padding */
+  .ks-create-page {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 40px 48px 80px !important;
+  }
+
+  /* Form card — full width, generous padding */
+  .ks-create-page .ks-form-card {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 40px 48px !important;
+  }
+
+  /* Form groups become a 2-column grid */
+  .ks-create-page .ks-form-card {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px 32px !important;
+    align-items: start !important;
+  }
+
+  /* Form heading spans both columns */
+  .ks-create-page .ks-form-card > h2 {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+
+  /* Textarea, upload, actions span full width */
+  .ks-create-page .ks-form-card > .ks-form-group:has(textarea),
+  .ks-create-page .ks-form-card > .ks-form-group:has(.ks-upload-box),
+  .ks-create-page .ks-form-group:has(textarea),
+  .ks-create-page .ks-form-group:has(.ks-upload-box),
+  .ks-create-page .ks-form-card > .ks-form-actions,
+  .ks-create-page .ks-form-actions,
+  .ks-create-page .ks-preview {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Form group spacing inside the grid */
+  .ks-create-page .ks-form-group {
+    margin-bottom: 0 !important;
+  }
+
+  /* Bigger heading on desktop */
+  .ks-create-page h1 {
+    font-size: 2.4rem !important;
+  }
+
+  .ks-create-page > p {
+    font-size: 1.05rem !important;
+    max-width: 720px !important;
+  }
+
+  /* Preview layout — image + info side by side, stretched */
+  .ks-create-page .ks-preview {
+    grid-template-columns: 280px 1fr !important;
+    gap: 32px !important;
+    padding: 28px !important;
+  }
+  .ks-create-page .ks-preview img {
+    height: 280px !important;
+  }
+  .ks-create-page .ks-preview h3 { font-size: 1.4rem !important; }
+  .ks-create-page .ks-preview-price { font-size: 1.8rem !important; }
+
+  /* Buttons align to the right on wide screens */
+  .ks-create-page .ks-form-actions {
+    justify-content: flex-end !important;
+  }
+}
+
+/* Extra-wide screens — 3-column for even better use */
+@media (min-width: 1400px) {
+  .ks-create-page .ks-form-card {
+    grid-template-columns: 1fr 1fr 1fr !important;
+    padding: 48px 64px !important;
+  }
+  /* Textareas and upload still span full */
+  .ks-create-page .ks-form-group:has(textarea),
+  .ks-create-page .ks-form-group:has(.ks-upload-box) {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Fallback for browsers without :has() — keep single-column layout */
+@supports not selector(:has(*)) {
+  @media (min-width: 900px) {
+    .ks-create-page .ks-form-card {
+      display: block !important;
+      max-width: 900px !important;
+      margin: 0 auto !important;
+    }
+    .ks-create-page .ks-form-group {
+      margin-bottom: 18px !important;
+    }
+  }
+}
