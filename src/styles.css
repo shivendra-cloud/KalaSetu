@@ -2229,3 +2229,29 @@ header.ks-navbar,
     height: 200px;
   }
 }
+
+/* ============================================================
+   SELL CRAFT — align form with header (left-aligned consistently)
+   ============================================================ */
+.ks-create-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* Form card: match header alignment (left, not centered) */
+.ks-create-page .ks-form-card {
+  max-width: 720px !important;
+  margin: 0 !important;
+  padding: 28px !important;
+}
+
+@media (max-width: 768px) {
+  .ks-create-page {
+    padding: 20px 14px 60px;
+  }
+  .ks-create-page .ks-form-card {
+    max-width: 100% !important;
+    padding: 20px 16px !important;
+  }
+}
